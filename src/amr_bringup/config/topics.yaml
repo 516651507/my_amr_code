@@ -20,9 +20,7 @@ expected_topics:
 # 由 mars_serial 上报 STM32 数据后发布的话题名因工程而异，确认后取消注释并加入看门狗
 optional_topics:
   - /imu/data
-  - /imu
   - /battery_state
-  - /mars/battery
 
 hardware:
   lidar_model: LDS-50C-E

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>amr_lidar</name>
+  <version>0.1.0</version>
+  <description>蓝海 LDS-50C-E：bluesea2 启动封装 + laser_fan → scan_filtered 滤波节点。</description>
+  <maintainer email="pengfei@example.com">Pengfei</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>sensor_msgs</depend>
+  <exec_depend>laser_geometry</exec_depend>
+
+  <export/>
+</package>

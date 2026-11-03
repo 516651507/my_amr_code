@@ -1,0 +1,11 @@
+<launch>
+  <include file="$(find amr_bringup)/launch/full_robot.launch">
+    <arg name="start_bluesea" value="false"/>
+    <arg name="start_cameras" value="false"/>
+  </include>
+  <include file="$(find amr_mapping)/launch/mapping.launch">
+    <arg name="publish_description_tf" value="false"/>
+    <arg name="publish_wheel_odom_tf" value="false"/>
+    <arg name="with_watchdog" value="false"/>
+  </include>
+</launch>

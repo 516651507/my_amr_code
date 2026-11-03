@@ -1,0 +1,13 @@
+# 目标点云话题（与 amr_obstacle_fusion 一致）
+camera1:
+  points_topic: /camera/depth/points_cam
+  camera_name: camera
+camera2:
+  points_topic: /camera2/depth/points_cam
+  camera_name: camera2
+
+# 下列为 Orbbec ROS 驱动常见参数占位；实际键名以所选驱动包为准
+depth_width: 640
+depth_height: 480
+depth_fps: 15
+enable_point_cloud: true

@@ -1,0 +1,21 @@
+<launch>
+  <!--
+    奥比中光大白 DW2 ×2 — 点云话题契约见 config/dw2_dual.yaml。
+    Orbbec 官方 ROS1 驱动因型号/USB 拓扑差异较大，本 launch 只加载参数；
+    安装驱动后请在本文件末尾按现场 uncomment 对应 include。
+
+    安装参考：scripts/install_third_party.sh
+  -->
+  <arg name="start_cameras" default="false"/>
+
+  <rosparam command="load" file="$(find amr_camera)/config/dw2_dual.yaml"/>
+
+  <!-- 示例（需安装 OrbbecSDK_ROS1 / orbbec_camera 并改 USB 端口）：
+  <group if="$(arg start_cameras)" ns="camera">
+    <include file="$(find orbbec_camera)/launch/xxx.launch"/>
+  </group>
+  <group if="$(arg start_cameras)" ns="camera2">
+    <include file="$(find orbbec_camera)/launch/xxx.launch"/>
+  </group>
+  -->
+</launch>

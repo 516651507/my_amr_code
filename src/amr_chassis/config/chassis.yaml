@@ -1,0 +1,17 @@
+port: /dev/ttyS4
+baud_rate: 115200
+wheel_diameter: 0.165
+wheel_spacing: 0.42
+max_linear_speed: 1.5
+max_angular_speed: 1.5
+odom_frame: odom
+base_frame: base_link
+odom_topic: /wheel_odom
+imu_topic: /imu/data
+battery_topic: /battery_state
+manual_cmd_topic: /cmd_vel
+auto_cmd_topic: /autoVel_cmd
+publish_tf: true
+# 自动模式：autoVel_cmd 在 timeout 内有效则覆盖 cmd_vel
+auto_cmd_priority: true
+auto_cmd_timeout: 0.5

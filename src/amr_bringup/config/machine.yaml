@@ -1,4 +1,4 @@
-# 与 STM32↔RK 协议、mars_serial_server 机器参数对齐。改轮径/轮距必须同步 mars 与 TEB。
+# 与 STM32↔RK 协议、amr_chassis 节点参数对齐。改轮径/轮距必须同步 TEB/gmapping。
 robot:
   model: differential_amr
   footprint_m: [0.80, 0.49]   # 长 × 宽 mm 级：800 × 490

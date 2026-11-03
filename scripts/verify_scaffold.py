@@ -60,6 +60,13 @@ def main():
         os.path.join(ROOT, "src/amr_mapping/scripts/mapping_assist.py"),
         os.path.join(ROOT, "src/amr_navigation/scripts/cmd_smoother.py"),
     ]
+    proto_test = os.path.join(ROOT, "src/amr_chassis/src/amr_chassis/stm32_protocol.py")
+    if os.path.isfile(proto_test):
+        result = subprocess.run([sys.executable, proto_test], capture_output=True, text=True)
+        if result.returncode != 0:
+            errors.append("stm32_protocol: {}".format(result.stderr or result.stdout))
+        else:
+            print(result.stdout.strip())
     for path in py_tests:
         result = subprocess.run([sys.executable, path, "--self-test"], capture_output=True, text=True)
         if result.returncode != 0:
@@ -103,6 +110,9 @@ def main():
         "wheel_spacing: 0.42",
         "/dev/ttyS4",
         "192.168.158.98",
+        "amr_chassis",
+        "chassis_serial",
+        "scan_filter",
     ]
     blob = []
     for path in walk_ext((".launch", ".yaml", ".yml", ".py", ".xacro", ".cpp", ".h", ".hpp")):

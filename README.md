@@ -2,7 +2,16 @@
 
 彭飞这台差速 AMR 的应用层：建图、全局路径规划、雷达加双深度相机避障。
 
-**下层（不在本仓库编译）**：STM32 底盘经 `mars_serial_server`（串口 **115200**，默认 brief 为 `/dev/ttyS4`）发布 `/wheel_odom`，并订阅 `/cmd_vel` 与 **`/autoVel_cmd`**；**蓝海 LDS-50C-E** 经 **bluesea2 UDP**（雷达 `192.168.158.98` → RK `eth1` `192.168.158.15:6668`）出 `/lidar1/laser_fan` → 现场滤波 → **`/lidar1/scan_filtered`**；**奥比中光大白 DW2 ×2** 在 **`~/camera_ws`** 出两路深度点云。
+**全新自研栈（本仓库）**：
+
+| 层 | 包 | 作用 |
+|----|-----|------|
+| 底盘 | **`amr_chassis`** | STM32 串口协议、`/wheel_odom`+TF、`/imu/data`、`/battery_state`，订阅 `/cmd_vel` 与 **`/autoVel_cmd`** |
+| 雷达 | **`amr_lidar`** + [bluesea2](https://github.com/BlueSeaLidar/bluesea2) | LDS-50C-E UDP → `/lidar1/laser_fan` → **scan_filter** → `/lidar1/scan_filtered` |
+| 相机 | **`amr_camera`** + Orbbec ROS1 驱动 | 双 **DW2** 点云 `/camera/...`、`/camera2/...`（驱动需 `./scripts/install_third_party.sh` 后配置 launch） |
+| 应用 | mapping / navigation / obstacle_fusion | 建图、规划、融合避障 |
+
+串口默认 **`/dev/ttyS4` @ 115200**。雷达网段 **`192.168.158.98` → `192.168.158.15:6668`**。
 
 完整协议、差速换算与启动顺序见 **[docs/hardware_and_protocol_zh.md](docs/hardware_and_protocol_zh.md)**。
 
@@ -47,7 +56,7 @@
 | 坐标系 | 谁发布 |
 | --- | --- |
 | `map` → `odom` | 建图时 gmapping，导航时 amcl |
-| `odom` → `base_link` | `odom_tf_bridge`（订阅 `/wheel_odom`）。底盘已经在发这条 TF 时把 `publish_wheel_odom_tf` 设为 false |
+| `odom` → `base_link` | **`amr_chassis`**（默认发布）。用 `full_robot.launch` / `mapping_full` 时不要重复开 `odom_tf_bridge` |
 | `base_link` → `laser_link` | URDF，默认单位变换，和现有 `mars_tf_bridge` 一致 |
 | `camera_link`、`camera_depth_optical_frame`、`camera2_*` | URDF 占位。外参没测，不要当成真值 |
 
@@ -72,7 +81,9 @@ roslaunch amr_bringup stub_tf.launch
 | `amr_obstacle_fusion/sensor_fusion_node` | 把雷达端点和两路点云变到 `base_link`，按高度、距离、车体足迹过滤，体素压缩后发布 `/amr/fusion/scan` 和 `/amr/fusion/cloud`。同一角度保留更近的距离 |
 | `amr_obstacle_fusion/FusionObstacleLayer` | `costmap_2d` 插件。订阅融合点云，把高度窗内的点标成致命障碍。过期不再画，静态地图由 StaticLayer 每周期重画，不会被这层擦掉 |
 | `amr_navigation/cmd_smoother.py` | 线速度/角速度限幅、高速时压低角速度、小角速度死区、加速度限制。这是防蛇形的最后一层 |
-| `amr_bringup/odom_tf_bridge.py` | `/wheel_odom` 转成 `odom` → `base_link` |
+| **`amr_chassis`** | STM32 串口、里程计、IMU/电池、速度下发 |
+| `amr_lidar/scan_filter_node.py` | LDS-50C-E 扫描滤波 |
+| `amr_bringup/odom_tf_bridge.py` | 仅在没有 chassis 时用 |
 | `amr_mapping/mapping_assist.py` | 按 `map_server` 的 PGM/YAML 规则存图 |
 | `amr_description` | 占位 URDF |
 
@@ -141,6 +152,19 @@ source devel/setup.bash
 
 ```bash
 ln -sf /opt/ros/noetic/share/catkin/cmake/toplevel.cmake src/CMakeLists.txt
+```
+
+## 一键启动（推荐）
+
+```bash
+./scripts/install_third_party.sh   # 首次：bluesea2 + 说明 Orbbec 驱动
+catkin_make && source devel/setup.bash
+
+# 底盘 + 雷达滤波 + 描述（bluesea 需先复制 driver.launch.example）
+roslaunch amr_bringup full_robot.launch start_bluesea:=true
+
+roslaunch amr_bringup mapping_full.launch
+roslaunch amr_bringup navigation_full.launch map_file:=$(rospack find amr_mapping)/maps/amr_map.yaml
 ```
 
 ## 建图

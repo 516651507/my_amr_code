@@ -12,8 +12,8 @@
 └───────────────────────────┬─────────────────────────────────┘
                             │ 只订阅/发布标准 ROS 话题
 ┌───────────────────────────▼─────────────────────────────────┐
-│  mars_serial_server │ bluesea2 │ camera_ws (Orbbec DW2)     │  ← 现场已有 / 其它 catkin_ws
-│  mars_tf_bridge     │ scan 过滤节点 → /lidar1/scan_filtered │
+│  amr_chassis        │ amr_lidar (+ bluesea2) │ amr_camera (DW2) │  ← 本仓库自研 / 第三方驱动
+│  scan_filter        │ → /lidar1/scan_filtered              │
 └───────────────────────────┬─────────────────────────────────┘
                             │ UART / UDP / USB
 ┌───────────────────────────▼─────────────────────────────────┐
@@ -25,7 +25,7 @@
 
 ## 2. STM32 ↔ RK3588 串口协议（与 mars_serial_server 对齐）
 
-依据下层协议文档整理；**字节序小端**，帧格式：
+**实现包：`amr_chassis`**（`chassis_serial_node.py`）。依据下层协议文档；**字节序小端**，帧格式：
 
 `5A A5 | msgtype msgid length | payload | XOR校验 | 5C C5`
 
@@ -54,7 +54,7 @@ motor.left  =  left_v  * 60 / (π * wheel_diameter)
 motor.right = -right_v * 60 / (π * wheel_diameter)   // 右轮目标取负
 ```
 
-本仓库 **不实现串口**，但 `amr_bringup/config/machine.yaml` 中的 **轮径 0.165 m、轮距 0.42 m** 必须与 `mars_serial_server` / `machine_params` 一致，否则 TEB、gmapping 噪声参数与真实运动不匹配。
+`amr_chassis/config/chassis.yaml` 与 `machine.yaml` 中 **轮径 0.165 m、轮距 0.42 m** 必须与 STM32 侧一致，并与 TEB `wheelbase` 对齐。
 
 ### 2.3 串口设备
 
@@ -71,7 +71,9 @@ motor.right = -right_v * 60 / (π * wheel_diameter)   // 右轮目标取负
 |------|--------|--------|
 | `/cmd_vel` | 遥控 / 手动节点 | mars_serial → STM32 |
 | `/autoVel_cmd` | **本仓库** `cmd_smoother`（导航自动） | mars_serial → STM32 |
-| `/wheel_odom` | mars（由 MotorEncoder 积分） | gmapping、amcl、TEB、`odom_tf_bridge` |
+| `/wheel_odom` | **amr_chassis**（MotorEncoder 积分 + TF） | gmapping、amcl、TEB（无需 odom_tf_bridge） |
+| `/imu/data` | amr_chassis | 可选融合 / 看门狗 |
+| `/battery_state` | amr_chassis | 监控 |
 
 **不要**让导航栈发布 `/cmd_vel`，避免和手动抢控制权。
 
@@ -157,25 +159,18 @@ publish_description_tf:=false
 ## 5. 推荐启动顺序（RK3588）
 
 ```bash
-# 1) 底盘 + 里程计（mars，串口 ttyS4 或 USB）
-roslaunch mars_bringup ...   # 以现场包名为准
+# 0) 第三方驱动（首次）
+./scripts/install_third_party.sh && catkin_make
 
-# 2) TF 桥（若未合在 mars 里）
-# mars_tf_bridge: base_link -> laser_link 等
+# 1) 底盘 + 雷达滤波 + 描述
+roslaunch amr_bringup full_robot.launch start_bluesea:=true start_cameras:=true
 
-# 3) 蓝海雷达（可选：本仓库模板）
-roslaunch amr_bringup lidar_bluesea_lds50ce.launch start_driver:=true
-
-# 4) 相机（camera_ws）
-roslaunch ... # DW2 双机 launch
-
-# 5) 应用层
-roslaunch amr_mapping mapping.launch publish_description_tf:=false publish_wheel_odom_tf:=false
-# 或
-roslaunch amr_navigation navigation.launch map_file:=... publish_description_tf:=false
+# 2) 建图 / 导航（已关重复 TF）
+roslaunch amr_bringup mapping_full.launch
+roslaunch amr_bringup navigation_full.launch map_file:=... start_bluesea:=true
 ```
 
-若 mars 已发布 `odom->base_link`，全程 **`publish_wheel_odom_tf:=false`**。
+使用 **amr_chassis** 时，mapping/navigation 请保持 **`publish_wheel_odom_tf:=false`**（full_* launch 已默认）。
 
 ---
 

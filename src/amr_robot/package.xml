@@ -9,6 +9,9 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <exec_depend>amr_bringup</exec_depend>
+  <exec_depend>amr_chassis</exec_depend>
+  <exec_depend>amr_lidar</exec_depend>
+  <exec_depend>amr_camera</exec_depend>
   <exec_depend>amr_description</exec_depend>
   <exec_depend>amr_mapping</exec_depend>
   <exec_depend>amr_navigation</exec_depend>

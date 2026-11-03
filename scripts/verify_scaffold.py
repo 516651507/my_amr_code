@@ -113,12 +113,34 @@ def main():
         "amr_chassis",
         "chassis_serial",
         "scan_filter",
+        "/api/debug/config/camera",
+        "/debug",
     ]
     blob = []
-    for path in walk_ext((".launch", ".yaml", ".yml", ".py", ".xacro", ".cpp", ".h", ".hpp")):
+    for path in walk_ext((".launch", ".yaml", ".yml", ".py", ".xacro", ".cpp", ".h", ".hpp", ".html")):
         with open(path, encoding="utf-8", errors="replace") as handle:
             blob.append(handle.read())
     text = "\n".join(blob)
+
+    extra = [
+        os.path.join(ROOT, "src/amr_chassis/src/amr_chassis/diff_odometry.py"),
+        os.path.join(ROOT, "src/amr_web/scripts/config_store.py"),
+    ]
+    for path in extra:
+        if os.path.isfile(path):
+            result = subprocess.run([sys.executable, path], capture_output=True, text=True)
+            if result.returncode != 0:
+                errors.append("{}: {}".format(rel(path), result.stderr or result.stdout))
+            else:
+                print(result.stdout.strip())
+
+    web_verify = subprocess.run([sys.executable, os.path.join(ROOT, "scripts/verify_web_api.py")],
+                                capture_output=True, text=True)
+    if web_verify.returncode != 0:
+        errors.append("verify_web_api:\n" + (web_verify.stderr or web_verify.stdout))
+    else:
+        print(web_verify.stdout.strip())
+
     for token in required:
         if token not in text:
             errors.append("仓库里找不到约定字段: {}".format(token))

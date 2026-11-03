@@ -81,3 +81,18 @@ def list_usb_sysfs_hints():
             pass
         hints.append({"usb_port": name, "label": label})
     return hints
+
+
+def run_self_test():
+    import tempfile
+
+    tmp = tempfile.mkdtemp(prefix="amr_cfg_test_")
+    path = os.path.join(tmp, "t.yaml")
+    save_yaml(path, {"camera1": {"usb_port": "a"}})
+    out = merge_camera_config(load_yaml(path), {"camera1": {"usb_port": "b"}})
+    assert out["camera1"]["usb_port"] == "b"
+    print("config_store self-test ok")
+
+
+if __name__ == "__main__":
+    run_self_test()

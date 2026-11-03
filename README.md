@@ -306,3 +306,12 @@ python3 scripts/verify_scaffold.py
 ```
 
 `catkin_make` 必须在 Noetic 上做。
+
+**无 ROS 的验证（开发机 / CI）：**
+
+```bash
+./scripts/verify_all.sh
+# 或
+python3 scripts/verify_scaffold.py
+./scripts/run_web_smoke.sh
+```

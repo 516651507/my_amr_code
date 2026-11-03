@@ -6,6 +6,7 @@ catkin_package()
 
 catkin_install_python(PROGRAMS
   scripts/web_api_server.py
+  scripts/web_routes.py
   scripts/config_store.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

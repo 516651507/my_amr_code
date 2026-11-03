@@ -36,3 +36,17 @@ class DiffOdometry(object):
             self.theta += dtheta
         self.theta = math.atan2(math.sin(self.theta), math.cos(self.theta))
         return self.x, self.y, self.theta
+
+
+def run_self_test():
+    odom = DiffOdometry(0.42)
+    x, y, th = odom.update_from_wheel_speeds(0.5, 0.5, 1.0)
+    assert abs(x - 0.5) < 1e-6 and abs(y) < 1e-6
+    odom.reset()
+    x, y, th = odom.update_from_wheel_speeds(0.0, 0.42, 1.0)
+    assert abs(th - 1.0) < 1e-6
+    print("diff_odometry self-test ok")
+
+
+if __name__ == "__main__":
+    run_self_test()

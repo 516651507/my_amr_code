@@ -5,7 +5,6 @@
 from __future__ import division
 
 import os
-import subprocess
 import threading
 
 import rospy
@@ -14,17 +13,12 @@ from nav_msgs.msg import Odometry
 from sensor_msgs.msg import BatteryState
 from std_msgs.msg import String
 
+from web_routes import create_app
+
 try:
-    from flask import Flask, jsonify, request, send_from_directory
+    from flask import Flask
 except ImportError:
     Flask = None
-
-from config_store import (
-    list_usb_sysfs_hints,
-    load_yaml,
-    merge_camera_config,
-    save_yaml,
-)
 
 
 class RosBridgeState(object):
@@ -32,7 +26,8 @@ class RosBridgeState(object):
         self.odom = None
         self.battery = None
         self.load_mode = "empty"
-        self.lock = threading.Lock()
+        import threading as _threading
+        self.lock = _threading.Lock()
         self.cmd_pub = rospy.Publisher("/cmd_vel", Twist, queue_size=1)
         self.mode_cmd_pub = rospy.Publisher("/amr/load_mode_cmd", String, queue_size=1)
         rospy.Subscriber("/wheel_odom", Odometry, self._on_odom, queue_size=1)
@@ -92,85 +87,6 @@ class RosBridgeState(object):
         self.mode_cmd_pub.publish(String(data=str(mode)))
 
 
-def create_app(state, www_dir, camera_config_path):
-    app = Flask(__name__, static_folder=www_dir)
-
-    @app.route("/")
-    def index():
-        return send_from_directory(www_dir, "index.html")
-
-    @app.route("/api/status")
-    def api_status():
-        return jsonify(state.status_dict())
-
-    @app.route("/api/load_mode", methods=["GET"])
-    def api_get_mode():
-        return jsonify({"mode": state.load_mode})
-
-    @app.route("/api/load_mode", methods=["POST"])
-    def api_set_mode():
-        data = request.get_json(silent=True) or {}
-        mode = data.get("mode", "empty")
-        state.set_load_mode(mode)
-        return jsonify({"ok": True, "mode": mode})
-
-    @app.route("/api/cmd_vel", methods=["POST"])
-    def api_cmd():
-        data = request.get_json(silent=True) or {}
-        state.publish_cmd(data.get("linear", 0.0), data.get("angular", 0.0))
-        return jsonify({"ok": True})
-
-    @app.route("/api/cmd_vel/stop", methods=["POST"])
-    def api_stop():
-        state.stop()
-        return jsonify({"ok": True})
-
-    @app.route("/debug")
-    def debug_page():
-        return send_from_directory(www_dir, "debug.html")
-
-    @app.route("/api/debug/config/camera", methods=["GET"])
-    def api_get_camera_config():
-        try:
-            data = load_yaml(camera_config_path)
-        except (OSError, RuntimeError) as exc:
-            return jsonify({"ok": False, "error": str(exc)}), 500
-        return jsonify({
-            "ok": True,
-            "path": camera_config_path,
-            "config": data,
-            "apply_hint": "保存后请重启：roslaunch amr_camera dw2_dual.launch start_cameras:=true",
-        })
-
-    @app.route("/api/debug/config/camera", methods=["POST"])
-    def api_set_camera_config():
-        patch = request.get_json(silent=True) or {}
-        try:
-            current = load_yaml(camera_config_path)
-            merged = merge_camera_config(current, patch)
-            save_yaml(camera_config_path, merged)
-        except (OSError, RuntimeError, ValueError) as exc:
-            return jsonify({"ok": False, "error": str(exc)}), 400
-        return jsonify({
-            "ok": True,
-            "config": merged,
-            "apply_hint": "已写入 YAML；重启 DW2 驱动后生效",
-        })
-
-    @app.route("/api/debug/usb/hints", methods=["GET"])
-    def api_usb_hints():
-        hints = list_usb_sysfs_hints()
-        lsusb = []
-        try:
-            out = subprocess.check_output(["lsusb"], stderr=subprocess.STDOUT, timeout=3, text=True)
-            lsusb = [line.strip() for line in out.splitlines() if line.strip()]
-        except (subprocess.SubprocessError, FileNotFoundError, OSError):
-            pass
-        return jsonify({"ok": True, "sysfs": hints, "lsusb": lsusb})
-
-    return app
-
-
 def main():
     if Flask is None:
         rospy.logfatal("需要 Flask: sudo apt install python3-flask")
@@ -191,6 +107,7 @@ def main():
                 rospkg.RosPack().get_path("amr_camera"), "config", "dw2_dual.yaml")
         except Exception:
             camera_cfg = ""
+
     state = RosBridgeState()
     app = create_app(state, www_dir, camera_cfg)
 

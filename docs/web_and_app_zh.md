@@ -38,6 +38,22 @@ roslaunch amr_web web_control.launch
 | POST | `/api/load_mode` | `{"mode":"empty"}` 或 `"loaded"` | 空载 1.5 / 负载 0.8 m/s |
 | GET | `/api/load_mode` | — | 当前档位 |
 
+### 调试端口（DW2 USB / 参数）
+
+浏览器：**`http://<RK>:8080/debug`**
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/api/debug/config/camera` | 读取 `amr_camera/config/dw2_dual.yaml` |
+| POST | `/api/debug/config/camera` | 写入 `camera1/2` 的 `usb_port`、`serial_number` 等 |
+| GET | `/api/debug/usb/hints` | `lsusb` + sysfs 端口列表，便于填 USB 路径 |
+
+**注意：**
+
+- 保存的是 **YAML 文件**，不是热插拔即时生效；改 USB 后需 **重启** `dw2_dual.launch`（或整机 `full_robot`）。
+- 后续可在同一调试页扩展：雷达 IP、串口设备、外参占位 — 建议仍「Web 改配置 + 重启节点」模式。
+- 当前 **无登录**；仅建议在 **局域网** 使用，公网需再加鉴权。
+
 **安全约定（请 APP 遵守）：**
 
 1. **自动导航运行中** 不要持续发 `/api/cmd_vel`（会与 `/autoVel_cmd` 抢底盘；chassis 有 auto 优先，但仍可能抖动）。

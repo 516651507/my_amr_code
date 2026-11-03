@@ -1,0 +1,5 @@
+<launch>
+  <arg name="map_file" default="$(find amr_mapping)/maps/placeholder.yaml"
+       doc="map_server 使用的 yaml。现场图换成建图保存的文件。"/>
+  <node pkg="map_server" type="map_server" name="map_server" args="$(arg map_file)" output="screen"/>
+</launch>

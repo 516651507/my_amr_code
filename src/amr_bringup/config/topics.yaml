@@ -1,0 +1,14 @@
+# 与硬件说明一致的话题契约。看门狗只检查传感器，不伪造数据。
+scan_topic: /lidar1/scan_filtered
+scan_raw_topic: /lidar1/laser_fan
+wheel_odom_topic: /wheel_odom
+manual_cmd_topic: /cmd_vel
+auto_cmd_topic: /autoVel_cmd
+camera_cloud_topics:
+  - /camera/depth/points_cam
+  - /camera2/depth/points_cam
+expected_topics:
+  - /lidar1/scan_filtered
+  - /wheel_odom
+  - /camera/depth/points_cam
+  - /camera2/depth/points_cam

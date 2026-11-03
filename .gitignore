@@ -1,0 +1,15 @@
+build/
+devel/
+install/
+logs/
+.catkin_workspace
+.catkin_tools/
+*.pyc
+__pycache__/
+*.swp
+.vscode/
+.idea/
+
+# 建图时默认保存名，避免把现场地图提交进仓库
+src/amr_mapping/maps/amr_map.pgm
+src/amr_mapping/maps/amr_map.yaml

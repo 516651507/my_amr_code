@@ -1,0 +1,22 @@
+<launch>
+  <!-- 仅发布 URDF 固定关节。不发布 map/odom，避免和 gmapping、amcl 抢 TF。 -->
+  <arg name="laser_xyz" default="0 0 0"/>
+  <arg name="laser_rpy" default="0 0 0"/>
+  <arg name="camera_xyz" default="0.35 0.12 0.25"/>
+  <arg name="camera_rpy" default="0 0 0"/>
+  <arg name="camera2_xyz" default="0.35 -0.12 0.25"/>
+  <arg name="camera2_rpy" default="0 0 0"/>
+
+  <param name="robot_description"
+         command="$(find xacro)/xacro '$(find amr_description)/urdf/amr.urdf.xacro'
+                  laser_xyz:='$(arg laser_xyz)'
+                  laser_rpy:='$(arg laser_rpy)'
+                  camera_xyz:='$(arg camera_xyz)'
+                  camera_rpy:='$(arg camera_rpy)'
+                  camera2_xyz:='$(arg camera2_xyz)'
+                  camera2_rpy:='$(arg camera2_rpy)'"/>
+
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" value="20"/>
+  </node>
+</launch>

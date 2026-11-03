@@ -1,0 +1,35 @@
+# 车体 800 x 490 mm，base_link 在几何中心。升降货物超出车体时要加大这个多边形。
+footprint: [[0.40, 0.245], [0.40, -0.245], [-0.40, -0.245], [-0.40, 0.245]]
+footprint_padding: 0.02
+transform_tolerance: 0.5
+
+obstacle_layer:
+  observation_sources: fused_scan
+  fused_scan:
+    topic: /amr/fusion/scan
+    data_type: LaserScan
+    sensor_frame: ""
+    marking: true
+    clearing: true
+    inf_is_valid: true
+    observation_persistence: 0.0
+    expected_update_rate: 2.0
+    min_obstacle_height: 0.0
+    max_obstacle_height: 2.0
+    obstacle_range: 8.0
+    raytrace_range: 12.0
+
+# 自研层，插件 amr_obstacle_fusion::FusionObstacleLayer
+fusion_layer:
+  enabled: true
+  cloud_topic: /amr/fusion/cloud
+  obstacle_range: 8.0
+  min_obstacle_height: 0.05
+  max_obstacle_height: 1.60
+  keep_time: 0.6
+  transform_tolerance: 0.3
+  stale_timeout: 1.0
+
+inflation_layer:
+  inflation_radius: 0.55
+  cost_scaling_factor: 4.0

@@ -1,0 +1,140 @@
+# 差速，最高 1.5 m/s。同内容挂到两个可能的插件命名空间。
+# 蛇形主要来自同伦类来回切换、贴线权重太低、高速角速度太大。下面按这个收。
+teb_core: &teb_core
+  odom_topic: /wheel_odom
+  map_frame: odom
+
+  # 速度。底盘固件如果还卡在 0.25 m/s，这里改到 1.5 也不会真的跑到。
+  max_vel_x: 1.5
+  max_vel_x_backwards: 0.15
+  max_vel_y: 0.0
+  max_vel_trans: 1.5
+  max_vel_theta: 1.0
+  acc_lim_x: 0.8
+  acc_lim_y: 0.0
+  acc_lim_theta: 1.2
+  min_turning_radius: 0.0
+  wheelbase: 0.42
+  cmd_angle_instead_rotvel: false
+  is_footprint_dynamic: false
+  use_proportional_saturation: true
+  transform_tolerance: 0.4
+
+  footprint_model:
+    type: polygon
+    vertices: [[0.40, 0.245], [0.40, -0.245], [-0.40, -0.245], [-0.40, 0.245]]
+
+  xy_goal_tolerance: 0.15
+  yaw_goal_tolerance: 0.15
+  free_goal_vel: false
+  trans_stopped_vel: 0.05
+  theta_stopped_vel: 0.05
+  complete_global_plan: true
+
+  teb_autosize: true
+  dt_ref: 0.3
+  dt_hysteresis: 0.1
+  min_samples: 3
+  max_samples: 60
+  global_plan_overwrite_orientation: true
+  allow_init_with_backwards_motion: false
+  max_global_plan_lookahead_dist: 5.0
+  # 必须大于 0，weight_viapoint 才会把车拉在全局路径上。
+  global_plan_viapoint_sep: 0.35
+  via_points_ordered: false
+  global_plan_prune_distance: 0.8
+  exact_arc_length: false
+  force_reinit_new_goal_dist: 1.0
+  force_reinit_new_goal_angular: 0.78
+  feasibility_check_no_poses: 5
+  publish_feedback: false
+  min_resolution_collision_check_angular: 0.06
+  control_look_ahead_poses: 1
+  prevent_look_ahead_poses_near_goal: true
+
+  # 多边形之外再留 0.20 m。近障把速度压下来，避免 1.5 m/s 贴着障碍挤。
+  min_obstacle_dist: 0.20
+  inflation_dist: 0.55
+  include_costmap_obstacles: true
+  costmap_obstacles_behind_robot_dist: 1.2
+  obstacle_poses_affected: 20
+  include_dynamic_obstacles: false
+  dynamic_obstacle_inflation_dist: 0.4
+  legacy_obstacle_association: false
+  obstacle_association_force_inclusion_factor: 1.5
+  obstacle_association_cutoff_factor: 5.0
+  costmap_converter_plugin: ""
+  costmap_converter_spin_thread: true
+  obstacle_proximity_ratio_max_vel: 0.35
+  obstacle_proximity_lower_bound: 0.45
+  obstacle_proximity_upper_bound: 1.4
+
+  no_inner_iterations: 5
+  no_outer_iterations: 4
+  optimization_activate: true
+  optimization_verbose: false
+  penalty_epsilon: 0.05
+  weight_max_vel_x: 2.0
+  weight_max_vel_y: 1.0
+  weight_max_vel_theta: 4.0
+  weight_acc_lim_x: 2.0
+  weight_acc_lim_y: 1.0
+  weight_acc_lim_theta: 2.0
+  weight_kinematics_nh: 1000.0
+  weight_kinematics_forward_drive: 80.0
+  weight_kinematics_turning_radius: 1.0
+  weight_optimaltime: 1.0
+  weight_shortest_path: 0.0
+  weight_obstacle: 80.0
+  weight_inflation: 0.3
+  weight_dynamic_obstacle: 10.0
+  weight_dynamic_obstacle_inflation: 0.1
+  weight_velocity_obstacle_ratio: 8.0
+  weight_viapoint: 8.0
+  weight_prefer_rotdir: 0.0
+  weight_adapt_factor: 2.0
+  obstacle_cost_exponent: 4.0
+
+  # 关掉同伦类，避免两条拓扑之间来回跳造成蛇形。
+  enable_homotopy_class_planning: false
+  enable_multithreading: true
+  simple_exploration: false
+  max_number_classes: 1
+  max_number_plans_in_current_class: 1
+  selection_cost_hysteresis: 1.0
+  selection_prefer_initial_plan: 0.95
+  selection_obst_cost_scale: 1.0
+  selection_viapoint_cost_scale: 1.0
+  selection_alternative_time_cost: false
+  selection_dropping_probability: 0.0
+  switching_blocking_period: 2.0
+  roadmap_graph_samples: 15
+  roadmap_graph_area_width: 5.0
+  roadmap_graph_area_length_scale: 1.0
+  h_signature_prescaler: 0.5
+  h_signature_threshold: 0.1
+  obstacle_keypoint_offset: 0.1
+  obstacle_heading_threshold: 0.45
+  viapoints_all_candidates: false
+  visualize_hc_graph: false
+  visualize_with_time_as_z_axis_scale: 0.0
+  delete_detours_backwards: true
+  detours_orientation_tolerance: 1.57
+  length_start_orientation_vector: 0.4
+  max_ratio_detours_duration_best_duration: 3.0
+
+  shrink_horizon_backup: true
+  shrink_horizon_min_duration: 8.0
+  oscillation_recovery: true
+  oscillation_v_eps: 0.08
+  oscillation_omega_eps: 0.08
+  oscillation_recovery_min_duration: 6.0
+  oscillation_filter_duration: 6.0
+  divergence_detection: false
+  divergence_detection_max_chi_squared: 10.0
+
+TebLocalPlannerROS:
+  <<: *teb_core
+
+"teb_local_planner/TebLocalPlannerROS":
+  <<: *teb_core

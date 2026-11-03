@@ -1,0 +1,11 @@
+<launch>
+  <arg name="odom_topic" default="/wheel_odom"/>
+  <arg name="odom_frame" default="odom"/>
+  <arg name="base_frame" default="base_link"/>
+  <node pkg="amr_bringup" type="odom_tf_bridge.py" name="odom_tf_bridge" output="screen">
+    <param name="odom_topic" value="$(arg odom_topic)"/>
+    <param name="odom_frame" value="$(arg odom_frame)"/>
+    <param name="base_frame" value="$(arg base_frame)"/>
+    <param name="force_frames" value="true"/>
+  </node>
+</launch>

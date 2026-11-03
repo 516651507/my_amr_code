@@ -1,0 +1,7 @@
+<library path="lib/libamr_fusion_layer">
+  <class name="amr_obstacle_fusion::FusionObstacleLayer"
+         type="amr_obstacle_fusion::FusionObstacleLayer"
+         base_class_type="costmap_2d::Layer">
+    <description>把融合点云标成致命障碍。自研层，清障靠观测过期。</description>
+  </class>
+</library>

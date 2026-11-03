@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>amr_bringup</name>
+  <version>0.1.0</version>
+  <description>底盘话题与 TF 占位：轮式里程计转 odom-&gt;base_link，以及传感器话题看门狗。</description>
+  <maintainer email="pengfei@example.com">Pengfei</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>tf2_ros</depend>
+  <depend>nav_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>diagnostic_msgs</depend>
+  <depend>std_msgs</depend>
+  <exec_depend>amr_description</exec_depend>
+
+  <export>
+  </export>
+</package>

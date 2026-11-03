@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>AMR 调试 — DW2 USB</title>
+  <style>
+    body { font-family: sans-serif; max-width: 520px; margin: 1rem auto; padding: 0 1rem; }
+    label { display: block; margin-top: 0.75rem; }
+    input { width: 100%; box-sizing: border-box; padding: 0.5rem; }
+    button { margin-top: 1rem; padding: 0.75rem 1rem; font-size: 1rem; }
+    pre { background: #f4f4f4; padding: 0.5rem; font-size: 0.8rem; overflow: auto; }
+    .hint { color: #555; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <h1>调试：DW2 USB</h1>
+  <p class="hint">保存写入 <code>dw2_dual.yaml</code>。修改后需<strong>重启相机 launch</strong> 才生效。</p>
+  <p><a href="/">返回遥控</a></p>
+
+  <label>相机1 usb_port（如 2-1.1）</label>
+  <input id="c1port" placeholder="留空表示由驱动自动枚举"/>
+  <label>相机1 serial_number</label>
+  <input id="c1serial"/>
+
+  <label>相机2 usb_port</label>
+  <input id="c2port"/>
+  <label>相机2 serial_number</label>
+  <input id="c2serial"/>
+
+  <button id="save">保存配置</button>
+  <button id="refresh" type="button">刷新 / USB 列表</button>
+
+  <h3>USB 提示</h3>
+  <pre id="usb"></pre>
+  <h3>当前 YAML</h3>
+  <pre id="cfg"></pre>
+
+  <script>
+    async function load() {
+      const [cfg, usb] = await Promise.all([
+        fetch('/api/debug/config/camera').then(r => r.json()),
+        fetch('/api/debug/usb/hints').then(r => r.json()),
+      ]);
+      if (cfg.ok) {
+        document.getElementById('c1port').value = cfg.config.camera1?.usb_port || '';
+        document.getElementById('c1serial').value = cfg.config.camera1?.serial_number || '';
+        document.getElementById('c2port').value = cfg.config.camera2?.usb_port || '';
+        document.getElementById('c2serial').value = cfg.config.camera2?.serial_number || '';
+        document.getElementById('cfg').textContent = JSON.stringify(cfg.config, null, 2);
+      }
+      document.getElementById('usb').textContent =
+        (usb.lsusb || []).join('\n') + '\n\nsysfs:\n' +
+        (usb.sysfs || []).map(x => x.usb_port + ' ' + x.label).join('\n');
+    }
+    document.getElementById('save').onclick = async () => {
+      const body = {
+        camera1: {
+          usb_port: document.getElementById('c1port').value,
+          serial_number: document.getElementById('c1serial').value,
+        },
+        camera2: {
+          usb_port: document.getElementById('c2port').value,
+          serial_number: document.getElementById('c2serial').value,
+        },
+      };
+      const r = await fetch('/api/debug/config/camera', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(body),
+      });
+      const j = await r.json();
+      alert(j.ok ? j.apply_hint : (j.error || '失败'));
+      load();
+    };
+    document.getElementById('refresh').onclick = load;
+    load();
+  </script>
+</body>
+</html>

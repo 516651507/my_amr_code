@@ -96,6 +96,13 @@ def main():
         "teb_local_planner/TebLocalPlannerROS",
         "global_planner/GlobalPlanner",
         "max_vel_x: 1.5",
+        "LDS-50C-E",
+        "Dabai_DW2",
+        "bluesea2",
+        "wheel_diameter: 0.165",
+        "wheel_spacing: 0.42",
+        "/dev/ttyS4",
+        "192.168.158.98",
     ]
     blob = []
     for path in walk_ext((".launch", ".yaml", ".yml", ".py", ".xacro", ".cpp", ".h", ".hpp")):

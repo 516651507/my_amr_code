@@ -1,8 +1,12 @@
 # 差速 AMR 导航栈（ROS1 Noetic）
 
-彭飞这台差速 AMR 的应用层：建图、全局路径规划、雷达加双深度相机避障。底盘、蓝海雷达驱动、Orbbec 相机驱动不在这个仓库里，这里只接它们已经在发的话题。
+彭飞这台差速 AMR 的应用层：建图、全局路径规划、雷达加双深度相机避障。
 
-车体约 800 × 490 mm，轮径 0.165 m，轮距 0.42 m。导航目标线速度 1.5 m/s。工作空间按机器人上的 `/home/linaro/catkin_ws` 来写，本仓库根目录本身就是一个 catkin 工作空间（里面有 `src/`）。
+**下层（不在本仓库编译）**：STM32 底盘经 `mars_serial_server`（串口 **115200**，默认 brief 为 `/dev/ttyS4`）发布 `/wheel_odom`，并订阅 `/cmd_vel` 与 **`/autoVel_cmd`**；**蓝海 LDS-50C-E** 经 **bluesea2 UDP**（雷达 `192.168.158.98` → RK `eth1` `192.168.158.15:6668`）出 `/lidar1/laser_fan` → 现场滤波 → **`/lidar1/scan_filtered`**；**奥比中光大白 DW2 ×2** 在 **`~/camera_ws`** 出两路深度点云。
+
+完整协议、差速换算与启动顺序见 **[docs/hardware_and_protocol_zh.md](docs/hardware_and_protocol_zh.md)**。
+
+车体约 800 × 490 mm，轮径 **0.165 m**，轮距 **0.42 m**（与 mars 电机换算一致）。导航目标线速度 1.5 m/s。工作空间按机器人上的 `/home/linaro/catkin_ws` 来写，本仓库根目录本身就是一个 catkin 工作空间（里面有 `src/`）。
 
 ## 架构
 
@@ -31,10 +35,10 @@
 
 | 方向 | 名字 | 说明 |
 | --- | --- | --- |
-| 订阅 | `/lidar1/scan_filtered` | 蓝海雷达过滤后的 `LaserScan`。原始扇区在 `/lidar1/laser_fan`，本栈不用 |
+| 订阅 | `/lidar1/scan_filtered` | **LDS-50C-E** + bluesea2 滤波后的 `LaserScan`。原始扇区 `/lidar1/laser_fan` 由驱动/滤波节点处理，本栈不直接订阅 |
 | 订阅 | `/wheel_odom` | `nav_msgs/Odometry` |
-| 订阅 | `/camera/depth/points_cam` | 相机 1 深度点云 |
-| 订阅 | `/camera2/depth/points_cam` | 相机 2 深度点云 |
+| 订阅 | `/camera/depth/points_cam` | **DW2** 相机 1 深度点云（`~/camera_ws`） |
+| 订阅 | `/camera2/depth/points_cam` | **DW2** 相机 2 深度点云 |
 | 发布 | `/autoVel_cmd` | 自动模式 `geometry_msgs/Twist` |
 | 不发布 | `/cmd_vel` | 留给手动 |
 
@@ -47,7 +51,7 @@
 | `base_link` → `laser_link` | URDF，默认单位变换，和现有 `mars_tf_bridge` 一致 |
 | `camera_link`、`camera_depth_optical_frame`、`camera2_*` | URDF 占位。外参没测，不要当成真值 |
 
-点云的 `header.frame_id` 必须能 TF 到 `base_link`。Orbbec 驱动如果已经在发同名坐标系，启动时加：
+点云的 `header.frame_id` 必须能 TF 到 `base_link`。DW2 驱动或 `mars_tf_bridge` 如果已经在发同名坐标系，启动时加：
 
 ```bash
 publish_description_tf:=false
@@ -83,6 +87,18 @@ roslaunch amr_bringup stub_tf.launch
 | `global_planner` | 全局路径，Dijkstra |
 | `teb_local_planner` | 差速局部规划 |
 | `costmap_2d` 的 Static / Obstacle / Inflation | 静态地图、融合扫描的打点与射线清障、膨胀 |
+
+## 硬件参数与契约文件
+
+| 文件 | 说明 |
+| --- | --- |
+| `src/amr_bringup/config/machine.yaml` | 轮径/轮距、串口、LDS-50C-E 网口、DW2 话题 |
+| `src/amr_bringup/config/bluesea_lds50ce.yaml` | bluesea2 UDP 模板（**勿用 YDLIDAR 驱动配网口 LDS-50C-E**） |
+| `src/amr_bringup/config/orbbec_dw2.yaml` | 双 DW2 点云与融合备注 |
+| `src/amr_bringup/launch/stack_contract.launch` | 加载契约 + 看门狗 |
+| `scripts/check_lidar_network.sh` | `ping` 雷达 IP |
+
+雷达驱动示例：复制 `launch/lidar_bluesea_lds50ce.driver.launch.example` 为 `lidar_bluesea_lds50ce.driver.launch`，安装 bluesea2 后 `start_driver:=true`。
 
 ## 依赖和编译
 

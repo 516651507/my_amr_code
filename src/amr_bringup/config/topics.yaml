@@ -1,14 +1,30 @@
-# 与硬件说明一致的话题契约。看门狗只检查传感器，不伪造数据。
+# ROS 话题契约（应用层 ↔ mars / bluesea2 / camera_ws）
+# 看门狗检查 expected_topics；optional_topics 仅告警，不阻塞导航
+
 scan_topic: /lidar1/scan_filtered
 scan_raw_topic: /lidar1/laser_fan
 wheel_odom_topic: /wheel_odom
 manual_cmd_topic: /cmd_vel
 auto_cmd_topic: /autoVel_cmd
+
 camera_cloud_topics:
   - /camera/depth/points_cam
   - /camera2/depth/points_cam
+
 expected_topics:
   - /lidar1/scan_filtered
   - /wheel_odom
   - /camera/depth/points_cam
   - /camera2/depth/points_cam
+
+# 由 mars_serial 上报 STM32 数据后发布的话题名因工程而异，确认后取消注释并加入看门狗
+optional_topics:
+  - /imu/data
+  - /imu
+  - /battery_state
+  - /mars/battery
+
+hardware:
+  lidar_model: LDS-50C-E
+  lidar_driver: bluesea2
+  camera_model: Orbbec_Dabai_DW2

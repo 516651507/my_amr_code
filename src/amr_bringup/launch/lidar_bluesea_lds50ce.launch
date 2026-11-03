@@ -1,0 +1,19 @@
+<launch>
+  <!--
+    蓝海 LDS-50C-E（UDP / bluesea2）参数模板。
+    本 launch 不强制启动驱动（避免未安装 bluesea2 时 roslaunch 失败）。
+
+    现场已有驱动时：保持 start_driver:=false，只确认 /lidar1/scan_filtered 在发即可。
+
+    需要由本 launch 启动驱动时：复制 launch/lidar_bluesea_lds50ce.driver.launch.example
+    为 lidar_bluesea_lds50ce.driver.launch，按 bluesea2 版本改参数后：
+      roslaunch amr_bringup lidar_bluesea_lds50ce.launch start_driver:=true
+  -->
+  <arg name="start_driver" default="false"/>
+
+  <rosparam command="load" file="$(find amr_bringup)/config/bluesea_lds50ce.yaml" ns="bluesea2_reference"/>
+
+  <group if="$(arg start_driver)">
+    <include file="$(find amr_bringup)/launch/lidar_bluesea_lds50ce.driver.launch"/>
+  </group>
+</launch>

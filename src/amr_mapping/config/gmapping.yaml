@@ -4,7 +4,7 @@ base_frame: base_link
 odom_frame: odom
 map_frame: map
 
-# 蓝海 LDS-50C-E 量程按现场裁剪。0 表示沿用扫描消息里的 range_max。
+# 蓝海 LDS-50C-E（bluesea2 UDP）：标称约 50 m，室内/仓库有效使用 25–30 m。
 maxRange: 30.0
 maxUrange: 25.0
 sigma: 0.05

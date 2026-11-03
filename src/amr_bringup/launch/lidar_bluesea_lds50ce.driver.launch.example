@@ -1,0 +1,22 @@
+<launch>
+  <!--
+    示例：安装 bluesea2 后复制为 lidar_bluesea_lds50ce.driver.launch 再使用。
+    cp lidar_bluesea_lds50ce.driver.launch.example lidar_bluesea_lds50ce.driver.launch
+
+    网口 LDS-50C-E：
+      roslaunch bluesea2 udp_lidar.launch
+
+    参数以 bluesea2 仓库 template.launch / udp_lidar.launch 为准；
+    下列 node 仅为占位，现场请改用官方 include 并 remap 到 /lidar1/laser_fan。
+  -->
+  <arg name="frame_id" default="laser_link"/>
+  <arg name="scan_topic" default="/lidar1/laser_fan"/>
+
+  <include file="$(find bluesea2)/launch/udp_lidar.launch"/>
+  <!-- 若官方 launch 发布 /scan，增加 remap：
+  <node ...>
+    <remap from="scan" to="$(arg scan_topic)"/>
+    <param name="frame_id" value="$(arg frame_id)"/>
+  </node>
+  -->
+</launch>

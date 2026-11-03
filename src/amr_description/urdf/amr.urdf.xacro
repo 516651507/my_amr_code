@@ -2,9 +2,9 @@
 <!--
   占位模型，不是实测 URDF。
   车体约 800 x 490 mm，base_link 取几何中心。
-  激光默认与现有 mars_tf_bridge 一致：base_link -> laser_link 为单位变换。
-  相机位置是占位，点云 header.frame_id 必须能连到 base_link。
-  若底盘或 Orbbec 驱动已经在发同名 TF，请不要再启动本描述，否则 TF 冲突。
+  激光：蓝海 LDS-50C-E，frame 常用 laser_link；与 mars_tf_bridge 一致时为 base_link 单位变换。
+  相机：奥比中光大白 DW2 ×2，link 为占位；点云 header.frame_id 必须能 TF 到 base_link。
+  若 mars_tf_bridge 或 ~/camera_ws 驱动已在发同名 TF，勿再启动本 description。
 -->
 <robot name="amr" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:arg name="laser_xyz" default="0 0 0"/>

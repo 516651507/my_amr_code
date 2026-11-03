@@ -1,4 +1,6 @@
-# sensor_fusion 私有参数。话题与硬件说明一致。
+# sensor_fusion 私有参数。
+# 雷达：蓝海 LDS-50C-E → /lidar1/scan_filtered（bluesea2 + 现场滤波）
+# 相机：奥比大白 DW2 ×2 → 下列点云话题（~/camera_ws）
 scan_topic: /lidar1/scan_filtered
 cloud_topics:
   - /camera/depth/points_cam

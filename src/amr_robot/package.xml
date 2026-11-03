@@ -12,6 +12,8 @@
   <exec_depend>amr_chassis</exec_depend>
   <exec_depend>amr_lidar</exec_depend>
   <exec_depend>amr_camera</exec_depend>
+  <exec_depend>amr_control</exec_depend>
+  <exec_depend>amr_web</exec_depend>
   <exec_depend>amr_description</exec_depend>
   <exec_depend>amr_mapping</exec_depend>
   <exec_depend>amr_navigation</exec_depend>

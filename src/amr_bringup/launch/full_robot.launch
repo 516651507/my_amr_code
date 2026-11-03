@@ -6,6 +6,10 @@
   <arg name="start_bluesea" default="false"/>
   <arg name="start_cameras" default="false"/>
   <arg name="with_watchdog" default="true"/>
+  <arg name="load_mode" default="true"/>
+  <arg name="start_web" default="false"/>
+
+  <include file="$(find amr_control)/launch/load_mode.launch" if="$(arg load_mode)"/>
 
   <include file="$(find amr_chassis)/launch/chassis.launch">
     <arg name="port" value="$(arg port)"/>
@@ -22,4 +26,6 @@
   </include>
 
   <include file="$(find amr_bringup)/launch/stack_contract.launch" if="$(arg with_watchdog)"/>
+
+  <include file="$(find amr_web)/launch/web_control.launch" if="$(arg start_web)"/>
 </launch>

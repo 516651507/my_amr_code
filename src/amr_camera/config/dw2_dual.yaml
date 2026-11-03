@@ -1,13 +1,26 @@
-# 目标点云话题（与 amr_obstacle_fusion 一致）
-camera1:
-  points_topic: /camera/depth/points_cam
-  camera_name: camera
-camera2:
-  points_topic: /camera2/depth/points_cam
-  camera_name: camera2
+# 奥比中光大白 DW 系列 ×2（USB）。驱动：OrbbecSDK_ROS1 → orbbec_camera
+# 安装：scripts/install_third_party.sh
 
-# 下列为 Orbbec ROS 驱动常见参数占位；实际键名以所选驱动包为准
+driver_package: orbbec_camera
+launch_file: dabai_dw.launch
+
+camera1:
+  namespace: camera
+  # orbbec 默认点云多为 /camera/depth/points
+  driver_cloud_topic: depth/points
+  points_topic: /camera/depth/points_cam
+  usb_port: ""          # 填 lsusb -t 或 udev 规则，例如 2-1.1
+  serial_number: ""
+
+camera2:
+  namespace: camera2
+  driver_cloud_topic: depth/points
+  points_topic: /camera2/depth/points_cam
+  usb_port: ""
+  serial_number: ""
+
 depth_width: 640
 depth_height: 480
 depth_fps: 15
 enable_point_cloud: true
+enable_depth: true

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>amr_web</name>
+  <version>0.1.0</version>
+  <description>Web 遥控与 REST API，供浏览器与 APP 对接。</description>
+  <maintainer email="pengfei@example.com">Pengfei</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <exec_depend>rosbridge_server</exec_depend>
+
+  <export/>
+</package>

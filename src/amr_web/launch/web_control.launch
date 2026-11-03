@@ -1,0 +1,13 @@
+<launch>
+  <arg name="port" default="8080"/>
+  <arg name="rosbridge" default="true"/>
+
+  <group if="$(arg rosbridge)">
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+  </group>
+
+  <node pkg="amr_web" type="web_api_server.py" name="web_api_server" output="screen">
+    <param name="port" value="$(arg port)"/>
+    <param name="www_dir" value="$(find amr_web)/www"/>
+  </node>
+</launch>

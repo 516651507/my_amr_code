@@ -40,7 +40,8 @@ class ChassisSerialNode(object):
         self.baud = int(rospy.get_param("~baud_rate", 115200))
         self.wheel_diameter = float(rospy.get_param("~wheel_diameter", 0.165))
         self.wheel_spacing = float(rospy.get_param("~wheel_spacing", 0.42))
-        self.max_linear = float(rospy.get_param("~max_linear_speed", 1.5))
+        self._max_linear_param = "~max_linear_speed"
+        self.max_linear = float(rospy.get_param(self._max_linear_param, 1.5))
         self.max_angular = float(rospy.get_param("~max_angular_speed", 1.5))
         self.odom_frame = rospy.get_param("~odom_frame", "odom")
         self.base_frame = rospy.get_param("~base_frame", "base_link")
@@ -107,7 +108,9 @@ class ChassisSerialNode(object):
                 lx, _, az = self._last_auto
             else:
                 lx, _, az = self._last_manual
-        lx = max(-self.max_linear, min(self.max_linear, lx))
+        max_lin = float(rospy.get_param(self._max_linear_param, self.max_linear))
+        self.max_linear = max_lin
+        lx = max(-max_lin, min(max_lin, lx))
         az = max(-self.max_angular, min(self.max_angular, az))
         return lx, az
 

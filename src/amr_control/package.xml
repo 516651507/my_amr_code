@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>amr_control</name>
+  <version>0.1.0</version>
+  <description>负载档位、速度上限同步（空载 1.5 m/s / 负载 0.8 m/s）。</description>
+  <maintainer email="pengfei@example.com">Pengfei</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <exec_depend>amr_bringup</exec_depend>
+
+  <export/>
+</package>

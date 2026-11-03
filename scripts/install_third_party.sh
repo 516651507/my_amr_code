@@ -24,8 +24,8 @@ echo "     ${ROOT}/src/amr_bringup/launch/lidar_bluesea_lds50ce.driver.launch"
 echo ""
 echo "=== 奥比 DW2：Orbbec ROS1（请按型号选分支/仓库）==="
 echo "常见："
-echo "  git clone https://github.com/orbbec/OrbbecSDK_ROS1.git ${SRC}/OrbbecSDK_ROS1"
-echo "安装后改 amr_camera/launch/dw2_dual.launch 里的 include。"
+clone_if_missing OrbbecSDK_ROS1 https://github.com/orbbec/OrbbecSDK_ROS1.git
+echo "Orbbec 编译后包名一般为 orbbec_camera；双 DW2 见 amr_camera/launch/dw2_dual.launch"
 
 echo ""
 echo "=== Python 串口依赖 ==="

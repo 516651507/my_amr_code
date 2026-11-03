@@ -1,15 +1,19 @@
 <launch>
-  <!-- 蓝海 LDS-50C-E：bluesea2 UDP + 本包 scan_filter -->
-  <arg name="start_bluesea" default="false"
-       doc="true 需已安装 bluesea2 且存在 lidar_bluesea_lds50ce.driver.launch"/>
-  <arg name="frame_id" default="laser_link"/>
+  <!-- 蓝海 LDS-50C-E：bluesea2 默认 /scan →（relay）→ laser_fan → scan_filtered -->
+  <arg name="start_bluesea" default="false"/>
+  <arg name="relay_scan" default="true"
+       doc="bluesea 发布 /scan 时 relay 到 /lidar1/laser_fan"/>
   <arg name="scan_raw" default="/lidar1/laser_fan"/>
+  <arg name="bluesea_scan_topic" default="/scan"/>
 
   <group if="$(arg start_bluesea)">
     <include file="$(find amr_bringup)/launch/lidar_bluesea_lds50ce.launch">
       <arg name="start_driver" value="true"/>
     </include>
   </group>
+
+  <node if="$(arg relay_scan)" pkg="topic_tools" type="relay" name="scan_to_laser_fan"
+        args="$(arg bluesea_scan_topic) $(arg scan_raw)"/>
 
   <node pkg="amr_lidar" type="scan_filter_node.py" name="lidar_scan_filter" output="screen">
     <rosparam command="load" file="$(find amr_lidar)/config/lds50ce.yaml"/>

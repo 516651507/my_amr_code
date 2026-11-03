@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="amr_control" type="load_mode_node.py" name="load_mode" output="screen">
+    <rosparam command="load" file="$(find amr_bringup)/config/speed_profiles.yaml"/>
+  </node>
+</launch>

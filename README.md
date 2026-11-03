@@ -11,7 +11,13 @@
 | 相机 | **`amr_camera`** + Orbbec ROS1 驱动 | 双 **DW2** 点云 `/camera/...`、`/camera2/...`（驱动需 `./scripts/install_third_party.sh` 后配置 launch） |
 | 应用 | mapping / navigation / obstacle_fusion | 建图、规划、融合避障 |
 
-串口默认 **`/dev/ttyS4` @ 115200**。雷达网段 **`192.168.158.98` → `192.168.158.15:6668`**。
+串口 **`/dev/ttyS4` @ 115200**。雷达 **eth1 = 192.168.158.15**，LDS-50C-E **`192.168.158.98:6668`**；bluesea2 默认 **`/scan`**，经 relay 到 **`/lidar1/laser_fan`** 再滤波（见 [docs/lidar_topics_zh.md](docs/lidar_topics_zh.md)）。
+
+**空载 1.5 m/s / 负载 0.8 m/s**：`amr_control/load_mode` + Web 页切换。
+
+**Web / APP**：[docs/web_and_app_zh.md](docs/web_and_app_zh.md) — `roslaunch amr_web web_control.launch`，浏览器 **`http://<RK>:8080`**。
+
+**外参含义**：[docs/extrinsics_zh.md](docs/extrinsics_zh.md)（`base_link` / `laser_link` / 相机坐标系）。
 
 完整协议、差速换算与启动顺序见 **[docs/hardware_and_protocol_zh.md](docs/hardware_and_protocol_zh.md)**。
 

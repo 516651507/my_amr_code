@@ -179,6 +179,7 @@ def _ros_main():
     rate = rospy.Rate(float(rospy.get_param("~publish_rate", 20.0)))
     rospy.loginfo("cmd_smoother: %s -> %s，线速度上限 %.2f m/s", cmd_in, cmd_out, cfg.max_vel_x)
     while not rospy.is_shutdown():
+        cfg.max_vel_x = float(rospy.get_param("/amr/max_linear_speed", cfg.max_vel_x))
         v, w, timed_out = smoother.step(rospy.Time.now().to_sec())
         if timed_out:
             rospy.logwarn_throttle(2.0, "规划速度超时，正在减速到 0")

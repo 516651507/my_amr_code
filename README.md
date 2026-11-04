@@ -21,6 +21,8 @@
 
 完整协议、差速换算与启动顺序见 **[docs/hardware_and_protocol_zh.md](docs/hardware_and_protocol_zh.md)**。
 
+**首次上车测试（小白逐步清单）：[docs/testing_guide_zh.md](docs/testing_guide_zh.md)**
+
 车体约 800 × 490 mm，轮径 **0.165 m**，轮距 **0.42 m**（与 mars 电机换算一致）。导航目标线速度 1.5 m/s。工作空间按机器人上的 `/home/linaro/catkin_ws` 来写，本仓库根目录本身就是一个 catkin 工作空间（里面有 `src/`）。
 
 ## 架构

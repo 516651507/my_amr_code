@@ -1,0 +1,10 @@
+<launch>
+  <!-- 加载机器参数与话题契约，启动接口看门狗。不启动 mars / 相机 / 雷达驱动。 -->
+  <arg name="with_watchdog" default="true"/>
+
+  <rosparam command="load" file="$(find amr_bringup)/config/machine.yaml"/>
+  <rosparam command="load" file="$(find amr_bringup)/config/orbbec_dw2.yaml"/>
+  <rosparam command="load" file="$(find amr_bringup)/config/bluesea_lds50ce.yaml" ns="bluesea2_reference"/>
+
+  <include file="$(find amr_bringup)/launch/watchdog.launch" if="$(arg with_watchdog)"/>
+</launch>

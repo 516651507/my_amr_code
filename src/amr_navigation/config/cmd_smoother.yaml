@@ -1,0 +1,21 @@
+# 接在 TEB 后面，再压一层小角速度和加速度。输出只到 /autoVel_cmd。
+max_vel_x: 1.5
+max_vel_x_backwards: 0.15
+max_vel_theta: 1.0
+max_acc_x: 0.8
+max_acc_theta: 1.5
+# 规划中断后用更大的减速度收掉，底盘自己也应有超时停车。
+timeout_acc_x: 1.5
+timeout_acc_theta: 2.0
+cmd_timeout: 0.4
+# 走起来以后，比这个小的角速度当成噪声丢掉。
+w_deadband: 0.04
+v_deadband_min: 0.20
+# 速度越快，允许的角速度越低。0.6 表示满速时只留约 40% 的 max_vel_theta。
+yaw_rate_speed_scale: 0.60
+min_yaw_fraction: 0.35
+# 1 表示不滤波。
+lpf_alpha: 0.55
+publish_rate: 20.0
+cmd_in_topic: /amr/cmd_vel_raw
+cmd_out_topic: /autoVel_cmd

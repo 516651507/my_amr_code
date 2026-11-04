@@ -1,0 +1,21 @@
+<launch>
+  <!--
+    只用于没有里程计、没有定位时把 TF 树补全，方便看坐标系。
+    不要和 mapping.launch / navigation.launch 一起开：
+    gmapping 与 amcl 会自己发 map -> odom，里程计桥会发 odom -> base_link。
+  -->
+  <arg name="publish_description_tf" default="true"/>
+  <arg name="static_map_to_odom" default="true"/>
+  <arg name="static_odom_to_base" default="true"/>
+
+  <include file="$(find amr_description)/launch/description.launch" if="$(arg publish_description_tf)"/>
+
+  <node if="$(arg static_map_to_odom)"
+        pkg="tf2_ros" type="static_transform_publisher" name="static_map_to_odom"
+        args="0 0 0 0 0 0 map odom"/>
+  <node if="$(arg static_odom_to_base)"
+        pkg="tf2_ros" type="static_transform_publisher" name="static_odom_to_base"
+        args="0 0 0 0 0 0 odom base_link"/>
+
+  <include file="$(find amr_bringup)/launch/watchdog.launch"/>
+</launch>

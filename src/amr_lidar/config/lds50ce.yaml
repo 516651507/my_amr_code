@@ -1,0 +1,5 @@
+scan_in: /lidar1/laser_fan
+scan_out: /lidar1/scan_filtered
+min_range: 0.15
+max_range: 30.0
+drop_zero_as_invalid: true

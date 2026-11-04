@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>amr_navigation</name>
+  <version>0.1.0</version>
+  <description>差速 AMR 导航：map_server、amcl、move_base、global_planner、teb_local_planner，速度发到 /autoVel_cmd。</description>
+  <maintainer email="pengfei@example.com">Pengfei</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>geometry_msgs</depend>
+  <exec_depend>move_base</exec_depend>
+  <exec_depend>global_planner</exec_depend>
+  <exec_depend>teb_local_planner</exec_depend>
+  <exec_depend>amcl</exec_depend>
+  <exec_depend>map_server</exec_depend>
+  <exec_depend>costmap_2d</exec_depend>
+  <exec_depend>amr_mapping</exec_depend>
+  <exec_depend>amr_bringup</exec_depend>
+  <exec_depend>amr_description</exec_depend>
+  <exec_depend>amr_obstacle_fusion</exec_depend>
+
+  <export>
+  </export>
+</package>

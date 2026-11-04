@@ -1,0 +1,42 @@
+# 与 STM32↔RK 协议、amr_chassis 节点参数对齐。改轮径/轮距必须同步 TEB/gmapping。
+robot:
+  model: differential_amr
+  footprint_m: [0.80, 0.49]   # 长 × 宽 mm 级：800 × 490
+  wheel_diameter: 0.165       # m，协议换算用 PI * wheel_diameter / 60
+  wheel_spacing: 0.42         # m，差速 kinematics 轮距（左右轮中心距）
+  max_linear_speed: 1.5       # m/s，应用层目标；固件/mars 可能另有限速
+
+serial:
+  # 彭飞 brief：板载 UART；协议文档示例为 ttyUSB0
+  device: /dev/ttyS4
+  device_alt: /dev/ttyUSB0
+  baud_rate: 115200
+  protocol: mars_binary_frame   # 5A A5 ... XOR ... 5C C5，见 docs/hardware_and_protocol_zh.md
+
+chassis_ros:
+  odom_topic: /wheel_odom
+  manual_cmd_topic: /cmd_vel
+  auto_cmd_topic: /autoVel_cmd
+  # mars 侧 50Hz 循环；导航 cmd_smoother 20Hz 发 autoVel_cmd 即可
+
+lidar:
+  vendor: BlueSea
+  model: LDS-50C-E
+  driver_package: bluesea2
+  launch: udp_lidar.launch
+  ip: 192.168.158.98
+  host_ip: 192.168.158.15
+  host_port: 6668
+  interface: eth1
+  frame_id: laser_link
+  scan_filtered_topic: /lidar1/scan_filtered
+  scan_raw_topic: /lidar1/laser_fan
+
+cameras:
+  vendor: Orbbec
+  model: Dabai_DW2
+  count: 2
+  workspace_hint: ~/camera_ws
+  cloud_topics:
+    - /camera/depth/points_cam
+    - /camera2/depth/points_cam

@@ -1,0 +1,18 @@
+<launch>
+  <arg name="map_file" default="$(find amr_mapping)/maps/placeholder.yaml"/>
+  <arg name="start_bluesea" default="false"/>
+  <arg name="start_cameras" default="true"/>
+
+  <include file="$(find amr_bringup)/launch/full_robot.launch">
+    <arg name="start_bluesea" value="$(arg start_bluesea)"/>
+    <arg name="start_cameras" value="$(arg start_cameras)"/>
+    <arg name="with_watchdog" value="false"/>
+  </include>
+
+  <include file="$(find amr_navigation)/launch/navigation.launch">
+    <arg name="map_file" value="$(arg map_file)"/>
+    <arg name="publish_description_tf" value="false"/>
+    <arg name="publish_wheel_odom_tf" value="false"/>
+    <arg name="with_watchdog" value="true"/>
+  </include>
+</launch>

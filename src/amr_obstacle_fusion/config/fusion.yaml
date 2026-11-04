@@ -1,0 +1,27 @@
+# sensor_fusion 私有参数。
+# 雷达：蓝海 LDS-50C-E → /lidar1/scan_filtered（bluesea2 + 现场滤波）
+# 相机：奥比大白 DW2 ×2 → 下列点云话题（~/camera_ws）
+scan_topic: /lidar1/scan_filtered
+cloud_topics:
+  - /camera/depth/points_cam
+  - /camera2/depth/points_cam
+output_scan_topic: /amr/fusion/scan
+output_cloud_topic: /amr/fusion/cloud
+target_frame: base_link
+
+# base_link 下的高度窗。地面和天花板不进障碍。
+min_height: 0.08
+max_height: 1.50
+min_range: 0.20
+max_range: 20.0
+
+# 车体 800 x 490 mm，再留 2 cm，丢掉打在自己身上的点。
+footprint_half_x: 0.42
+footprint_half_y: 0.27
+
+voxel_size: 0.08
+point_stride: 3
+max_cloud_points: 20000
+angle_increment_deg: 0.5
+publish_rate: 10.0
+tf_timeout: 0.10

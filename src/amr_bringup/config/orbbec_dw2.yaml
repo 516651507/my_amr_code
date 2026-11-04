@@ -1,0 +1,33 @@
+# 奥比中光大白 DW2 ×2 — 与 ~/camera_ws 驱动对接契约（本仓库不编译 Orbbec SDK）
+
+orbbec_dw2:
+  model: Dabai_DW2
+  count: 2
+  # 深度点云（与 brief 一致）
+  camera1:
+    namespace: camera
+    points_topic: /camera/depth/points_cam
+    # 常见 frame_id（以驱动为准）：camera_depth_optical_frame / camera_link
+    expected_frames:
+      - camera_link
+      - camera_depth_frame
+      - camera_depth_optical_frame
+  camera2:
+    namespace: camera2
+    points_topic: /camera2/depth/points_cam
+    expected_frames:
+      - camera2_link
+      - camera2_depth_frame
+      - camera2_depth_optical_frame
+
+  # 融合节点 amr_obstacle_fusion/config/fusion.yaml 已引用上述点云话题
+  fusion:
+    target_frame: base_link
+    min_height: 0.08
+    max_height: 1.50
+    point_stride: 3          # RK3588 上可调到 4–5 降 CPU
+    voxel_size: 0.08
+
+  # 启动前检查（示例）
+  # rostopic hz /camera/depth/points_cam /camera2/depth/points_cam
+  # rosrun tf tf_echo base_link camera_depth_optical_frame

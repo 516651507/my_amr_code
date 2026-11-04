@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="amr_obstacle_fusion" type="sensor_fusion_node" name="sensor_fusion" output="screen">
+    <rosparam command="load" file="$(find amr_obstacle_fusion)/config/fusion.yaml"/>
+  </node>
+</launch>

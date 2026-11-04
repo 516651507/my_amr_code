@@ -1,0 +1,13 @@
+<launch>
+  <arg name="cmd_topic" default="/amr/cmd_vel_raw"/>
+  <node pkg="move_base" type="move_base" name="move_base" output="screen">
+    <remap from="cmd_vel" to="$(arg cmd_topic)"/>
+    <rosparam command="load" file="$(find amr_navigation)/config/move_base.yaml"/>
+    <rosparam command="load" file="$(find amr_navigation)/config/global_planner.yaml"/>
+    <rosparam command="load" file="$(find amr_navigation)/config/teb_local_planner.yaml"/>
+    <rosparam command="load" file="$(find amr_navigation)/config/costmap_common.yaml" ns="global_costmap"/>
+    <rosparam command="load" file="$(find amr_navigation)/config/costmap_common.yaml" ns="local_costmap"/>
+    <rosparam command="load" file="$(find amr_navigation)/config/global_costmap.yaml"/>
+    <rosparam command="load" file="$(find amr_navigation)/config/local_costmap.yaml"/>
+  </node>
+</launch>

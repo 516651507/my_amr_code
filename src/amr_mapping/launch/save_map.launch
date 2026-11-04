@@ -1,0 +1,4 @@
+<launch>
+  <arg name="map_name" default="amr_map"/>
+  <node pkg="amr_mapping" type="save_map.sh" name="save_map_once" args="$(arg map_name)" output="screen"/>
+</launch>

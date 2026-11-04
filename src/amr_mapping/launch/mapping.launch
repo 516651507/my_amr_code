@@ -1,0 +1,34 @@
+<launch>
+  <!--
+    建图只用雷达 /lidar1/scan_filtered 和轮式里程计，不把相机写进地图。
+    相机噪声和近处地面会把栅格弄脏。避障融合在导航 launch 里打开。
+  -->
+  <arg name="publish_description_tf" default="true"
+       doc="底盘或 mars_tf_bridge 已发 laser/camera TF 时设为 false"/>
+  <arg name="publish_wheel_odom_tf" default="true"
+       doc="驱动已经发布 odom-&gt;base_link 时设为 false"/>
+  <arg name="scan_topic" default="/lidar1/scan_filtered"/>
+  <arg name="odom_topic" default="/wheel_odom"/>
+  <arg name="with_watchdog" default="true"/>
+  <arg name="rviz" default="false"/>
+
+  <include file="$(find amr_description)/launch/description.launch" if="$(arg publish_description_tf)"/>
+  <include file="$(find amr_bringup)/launch/odom_tf.launch" if="$(arg publish_wheel_odom_tf)">
+    <arg name="odom_topic" value="$(arg odom_topic)"/>
+  </include>
+  <include file="$(find amr_bringup)/launch/watchdog.launch" if="$(arg with_watchdog)"/>
+
+  <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
+    <remap from="scan" to="$(arg scan_topic)"/>
+    <rosparam command="load" file="$(find amr_mapping)/config/gmapping.yaml"/>
+  </node>
+
+  <node pkg="amr_mapping" type="mapping_assist.py" name="mapping_assist" output="screen">
+    <param name="map_topic" value="/map"/>
+    <param name="save_dir" value="$(find amr_mapping)/maps"/>
+    <param name="map_name" value="amr_map"/>
+  </node>
+
+  <node if="$(arg rviz)" pkg="rviz" type="rviz" name="rviz_mapping"
+        args="-d $(find amr_mapping)/rviz/mapping.rviz"/>
+</launch>

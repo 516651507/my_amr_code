@@ -1,0 +1,23 @@
+<launch>
+  <!--
+    双 USB DW2：OrbbecSDK_ROS1 dabai_dw.launch ×2
+    USB/序列号：Web /debug 写入 config/dw2_dual.yaml，重启本 launch 后生效
+  -->
+  <arg name="start_cameras" default="false"/>
+
+  <rosparam command="load" file="$(find amr_camera)/config/dw2_dual.yaml"/>
+
+  <group if="$(arg start_cameras)">
+    <group ns="camera">
+      <include file="$(find orbbec_camera)/launch/dabai_dw.launch"/>
+      <node pkg="topic_tools" type="relay" name="cloud_alias"
+            args="depth/points depth/points_cam"/>
+    </group>
+
+    <group ns="camera2">
+      <include file="$(find orbbec_camera)/launch/dabai_dw.launch"/>
+      <node pkg="topic_tools" type="relay" name="cloud_alias"
+            args="depth/points depth/points_cam"/>
+    </group>
+  </group>
+</launch>

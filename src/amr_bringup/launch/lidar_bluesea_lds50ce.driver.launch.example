@@ -1,0 +1,14 @@
+<launch>
+  <!--
+    安装 bluesea2 后复制为 lidar_bluesea_lds50ce.driver.launch
+    cp lidar_bluesea_lds50ce.driver.launch.example lidar_bluesea_lds50ce.driver.launch
+
+    LDS-50C-E UDP：eth1=192.168.158.15，雷达 192.168.158.98，端口见 machine.yaml（常用 6668）
+    驱动在 ns lidar1 下发布 /lidar1/scan；relay 见 amr_lidar/lidar.launch
+  -->
+  <include file="$(find bluessea2)/launch/udp_lidar.launch"/>
+  <!-- 覆盖官方 launch 里不合适的默认值（与 amr_description 一致） -->
+  <param ns="/lidar1/lidar01" name="frame_id" value="laser_link"/>
+  <!-- LDS-50C-E 若连不上，把 6543 改为 6668 与雷达/本机 UDP 一致 -->
+  <param ns="/lidar1/lidar01" name="lidar_port" value="6668"/>
+</launch>

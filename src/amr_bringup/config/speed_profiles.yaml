@@ -1,0 +1,9 @@
+# 空载 / 负载线速度上限（与 TEB、cmd_smoother、chassis 同步）
+default_mode: empty
+modes:
+  empty:
+    max_linear_speed: 1.5
+    label: 空载
+  loaded:
+    max_linear_speed: 0.8
+    label: 负载

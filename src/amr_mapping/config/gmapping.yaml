@@ -1,0 +1,47 @@
+# slam_gmapping 私有参数。扫描话题在 launch 里 remap 到 /lidar1/scan_filtered。
+# 算法用的是 TF odom -> base_link，不是直接订阅 /wheel_odom。
+base_frame: base_link
+odom_frame: odom
+map_frame: map
+
+# 蓝海 LDS-50C-E（bluesea2 UDP）：标称约 50 m，室内/仓库有效使用 25–30 m。
+maxRange: 30.0
+maxUrange: 25.0
+sigma: 0.05
+kernelSize: 1
+lstep: 0.05
+astep: 0.05
+iterations: 5
+lsigma: 0.075
+ogain: 3.0
+lskip: 0
+# 0 表示来者不拒。地图拖影严重再抬到 30–50。
+minimumScore: 0.0
+
+# 轮式里程计噪声（差速，轮径 0.165 m，轮距 0.42 m）。打滑大就加大。
+srr: 0.1
+srt: 0.2
+str: 0.1
+stt: 0.2
+
+# RK3588 上粒子数不要拉太高，gmapping 基本是单线程。
+particles: 30
+linearUpdate: 0.25
+angularUpdate: 0.2
+temporalUpdate: 1.0
+resampleThreshold: 0.5
+map_update_interval: 2.0
+
+# 地图会按需增长，这里只是初始范围。分辨率 5 cm。
+xmin: -15.0
+ymin: -15.0
+xmax: 15.0
+ymax: 15.0
+delta: 0.05
+occ_thresh: 0.25
+llsamplerange: 0.01
+llsamplestep: 0.01
+lasamplerange: 0.005
+lasamplestep: 0.005
+transform_publish_period: 0.05
+throttle_scans: 1

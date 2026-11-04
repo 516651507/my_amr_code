@@ -1,0 +1,16 @@
+name: verify
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  scaffold:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python deps
+        run: pip install pyyaml flask
+      - name: verify_all
+        run: bash scripts/verify_all.sh

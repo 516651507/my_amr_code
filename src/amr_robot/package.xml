@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>amr_robot</name>
+  <version>0.1.0</version>
+  <description>彭飞差速 AMR 应用层元包：建图、雷达与双相机融合避障、全局路径规划。</description>
+  <maintainer email="pengfei@example.com">Pengfei</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>amr_bringup</exec_depend>
+  <exec_depend>amr_chassis</exec_depend>
+  <exec_depend>amr_lidar</exec_depend>
+  <exec_depend>amr_camera</exec_depend>
+  <exec_depend>amr_control</exec_depend>
+  <exec_depend>amr_web</exec_depend>
+  <exec_depend>amr_description</exec_depend>
+  <exec_depend>amr_mapping</exec_depend>
+  <exec_depend>amr_navigation</exec_depend>
+  <exec_depend>amr_obstacle_fusion</exec_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>

@@ -1,0 +1,16 @@
+# 1.5 m/s 时 8 m 窗口大约覆盖前方 4 m，配合 0.8 m/s^2 减速够用。
+local_costmap:
+  global_frame: odom
+  robot_base_frame: base_link
+  update_frequency: 8.0
+  publish_frequency: 4.0
+  rolling_window: true
+  width: 8.0
+  height: 8.0
+  resolution: 0.05
+  static_map: false
+  track_unknown_space: false
+  plugins:
+    - {name: obstacle_layer, type: "costmap_2d::ObstacleLayer"}
+    - {name: fusion_layer, type: "amr_obstacle_fusion::FusionObstacleLayer"}
+    - {name: inflation_layer, type: "costmap_2d::InflationLayer"}

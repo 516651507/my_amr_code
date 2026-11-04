@@ -1,0 +1,41 @@
+# 蓝海 LDS-50C-E + bluesea2（ROS1）UDP 参数模板
+# 用法：在已安装 bluesea2 的机器上，把本文件参数合并进 udp_lidar.launch 对应 rosparam，
+#       或 roslaunch amr_bringup lidar_bluesea_lds50ce.launch start_driver:=true
+#
+# 官方仓库：https://github.com/BlueSeaLidar/bluesea2
+# launch：udp_lidar.launch（网口 LDS-50C-E 不要用 uart_lidar / YDLIDAR）
+
+bluesea2:
+  # --- CONNECT（UDP）---
+  # 具体键名以 bluesea2 版本 template.launch 为准；下列为常见命名
+  connect_type: udp
+  lidar_ip: 192.168.158.98
+  lidar_port: 6668
+  local_ip: 192.168.158.15
+  local_port: 6668
+
+  # --- ROS 输出（现场栈多包一层 lidar1 命名空间时在 launch 里 remap）---
+  frame_id: laser_link
+  scan_topic: /lidar1/laser_fan
+  # 若驱动默认 /scan，可在 launch 中 remap scan -> /lidar1/laser_fan
+
+  # --- DATA（LDS-50C-E 50m 级，室内可收紧）---
+  range_min: 0.05
+  range_max: 50.0
+  output_scan: true
+  output_cloud: false
+  with_scan: true
+  # 2D 扫描；3D 点云一般关，由 scan_filtered 进导航
+
+  # --- 角度 / 滤波（按手册与现场 scan_filtered 节点微调）---
+  from_zero: false
+  hard_resample_factor: 1
+  soft_resample_factor: 1
+  filter_enable: true
+
+# 本仓库导航只订阅 scan_filtered；以下供 gmapping / amcl / fusion 参考
+amr_lidar_pipeline:
+  use_topic: /lidar1/scan_filtered
+  gmapping_max_urate: 25.0
+  fusion_max_range: 20.0
+  amcl_laser_max_range: 30.0

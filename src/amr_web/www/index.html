@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>AMR 遥控</title>
+  <style>
+    body { font-family: sans-serif; max-width: 420px; margin: 1rem auto; padding: 0 1rem; }
+    .status { background: #f4f4f4; padding: 0.75rem; border-radius: 8px; font-size: 0.9rem; }
+    .pad { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 1rem 0; }
+    button { padding: 1rem; font-size: 1.1rem; touch-action: manipulation; }
+    .mode { margin: 1rem 0; }
+    label { margin-right: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>差速 AMR</h1>
+  <p><a href="/debug">调试页（DW2 USB 等）</a></p>
+  <div class="status" id="status">连接中…</div>
+  <div class="mode">
+    <strong>负载档位</strong><br/>
+    <label><input type="radio" name="load" value="empty" checked/> 空载 1.5 m/s</label>
+    <label><input type="radio" name="load" value="loaded"/> 负载 0.8 m/s</label>
+  </div>
+  <p><small>手动遥控发 /cmd_vel；自动导航运行时请停止按键。</small></p>
+  <div class="pad">
+    <span></span>
+    <button id="fwd">前</button>
+    <span></span>
+    <button id="left">左</button>
+    <button id="stop">停</button>
+    <button id="right">右</button>
+    <span></span>
+    <button id="back">后</button>
+    <span></span>
+  </div>
+  <script>
+    const linear = 0.35;
+    const angular = 0.6;
+    let active = null;
+
+    async function api(path, opts) {
+      const r = await fetch(path, opts);
+      return r.json();
+    }
+
+    async function refresh() {
+      try {
+        const s = await api('/api/status');
+        document.getElementById('status').textContent =
+          `模式 ${s.load_mode}  vmax ${s.max_linear_speed} m/s` +
+          (s.odom ? `  x=${s.odom.x.toFixed(2)} y=${s.odom.y.toFixed(2)}` : '') +
+          (s.battery && s.battery.percentage != null ? `  电 ${(s.battery.percentage*100).toFixed(0)}%` : '');
+        document.querySelector(`input[value="${s.load_mode}"]`)?.click();
+      } catch (e) {
+        document.getElementById('status').textContent = '无法连接 API';
+      }
+    }
+
+    function send(l, a) {
+      api('/api/cmd_vel', { method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ linear: l, angular: a }) });
+    }
+
+    function bind(id, l, a) {
+      const el = document.getElementById(id);
+      const down = () => { active = setInterval(() => send(l, a), 100); send(l, a); };
+      const up = () => { clearInterval(active); api('/api/cmd_vel/stop', { method: 'POST' }); };
+      el.addEventListener('mousedown', down);
+      el.addEventListener('mouseup', up);
+      el.addEventListener('mouseleave', up);
+      el.addEventListener('touchstart', (e) => { e.preventDefault(); down(); });
+      el.addEventListener('touchend', up);
+    }
+
+    bind('fwd', linear, 0);
+    bind('back', -linear, 0);
+    bind('left', 0, angular);
+    bind('right', 0, -angular);
+    document.getElementById('stop').onclick = () => api('/api/cmd_vel/stop', { method: 'POST' });
+
+    document.querySelectorAll('input[name=load]').forEach(r => {
+      r.addEventListener('change', () => {
+        api('/api/load_mode', { method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ mode: r.value }) });
+      });
+    });
+
+    setInterval(refresh, 1000);
+    refresh();
+  </script>
+</body>
+</html>

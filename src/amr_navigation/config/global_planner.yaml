@@ -1,0 +1,15 @@
+# global_planner 读的命名空间取决于插件名。两份都写上，用到的那份生效。
+planner_core: &planner_core
+  allow_unknown: false
+  default_tolerance: 0.25
+  use_dijkstra: true
+  use_quadratic: true
+  use_grid_path: false
+  old_navfn_behavior: false
+  outline_map: true
+
+GlobalPlanner:
+  <<: *planner_core
+
+"global_planner/GlobalPlanner":
+  <<: *planner_core

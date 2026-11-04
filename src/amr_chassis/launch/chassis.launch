@@ -1,0 +1,7 @@
+<launch>
+  <arg name="port" default="/dev/ttyS4"/>
+  <node pkg="amr_chassis" type="chassis_serial_node.py" name="chassis_serial" output="screen">
+    <rosparam command="load" file="$(find amr_chassis)/config/chassis.yaml"/>
+    <param name="port" value="$(arg port)"/>
+  </node>
+</launch>

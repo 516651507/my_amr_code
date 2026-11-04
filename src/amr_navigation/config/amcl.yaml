@@ -1,0 +1,39 @@
+odom_frame_id: odom
+base_frame_id: base_link
+global_frame_id: map
+odom_model_type: diff-corrected
+# 轮径 0.165 m、轮距 0.42 m 的差速底盘，打滑大就加大 alpha。
+odom_alpha1: 0.2
+odom_alpha2: 0.2
+odom_alpha3: 0.2
+odom_alpha4: 0.2
+odom_alpha5: 0.1
+
+min_particles: 400
+max_particles: 2000
+update_min_d: 0.15
+update_min_a: 0.15
+resample_interval: 1
+transform_tolerance: 0.5
+recovery_alpha_slow: 0.001
+recovery_alpha_fast: 0.1
+
+laser_model_type: likelihood_field
+laser_max_range: 30.0
+laser_min_range: 0.2
+laser_max_beams: 60
+laser_z_hit: 0.5
+laser_z_rand: 0.5
+laser_sigma_hit: 0.2
+laser_likelihood_max_dist: 2.0
+laser_lambda_short: 0.1
+laser_z_short: 0.05
+laser_z_max: 0.05
+
+use_map_topic: true
+first_map_only: false
+gui_publish_rate: 5.0
+
+initial_pose_x: 0.0
+initial_pose_y: 0.0
+initial_pose_a: 0.0

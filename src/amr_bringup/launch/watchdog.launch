@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="amr_bringup" type="interface_watchdog.py" name="interface_watchdog" output="screen">
+    <rosparam command="load" file="$(find amr_bringup)/config/topics.yaml"/>
+  </node>
+</launch>

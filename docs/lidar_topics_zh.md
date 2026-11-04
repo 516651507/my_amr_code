@@ -11,8 +11,9 @@
 
 ```text
 bluesea2 (UDP, LDS-50C-E)
-    发布 /scan
-        │  topic_tools relay（或驱动 remap）
+    官方 launch 在 ns `lidar1` 下发布 **`/lidar1/scan`**
+    （若你改成根话题 `/scan`，把 lidar.launch 的 `bluesea_scan_topic` 改回 `/scan`）
+        │  topic_tools relay
         ▼
     /lidar1/laser_fan          ← 原始扫描（命名空间 + 语义）
         │  amr_lidar/scan_filter_node

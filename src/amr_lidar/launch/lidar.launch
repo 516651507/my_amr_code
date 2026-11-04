@@ -1,10 +1,10 @@
 <launch>
-  <!-- 蓝海 LDS-50C-E：bluesea2 默认 /scan →（relay）→ laser_fan → scan_filtered -->
+  <!-- 蓝海 LDS-50C-E：bluesea2 udp_lidar.launch 在 ns=lidar1 下发布 scan → /lidar1/scan -->
   <arg name="start_bluesea" default="false"/>
   <arg name="relay_scan" default="true"
-       doc="bluesea 发布 /scan 时 relay 到 /lidar1/laser_fan"/>
+       doc="relay 驱动 scan 到 /lidar1/laser_fan（官方驱动多为 /lidar1/scan 而非 /scan）"/>
   <arg name="scan_raw" default="/lidar1/laser_fan"/>
-  <arg name="bluesea_scan_topic" default="/scan"/>
+  <arg name="bluesea_scan_topic" default="/lidar1/scan"/>
 
   <group if="$(arg start_bluesea)">
     <include file="$(find amr_bringup)/launch/lidar_bluesea_lds50ce.launch">

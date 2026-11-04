@@ -1,11 +1,19 @@
 <launch>
+  <arg name="start_bluesea" default="true"/>
+  <arg name="start_cameras" default="false"/>
+  <arg name="start_web" default="false"/>
+  <arg name="rviz" default="false"/>
+
   <include file="$(find amr_bringup)/launch/full_robot.launch">
-    <arg name="start_bluesea" value="false"/>
-    <arg name="start_cameras" value="false"/>
+    <arg name="start_bluesea" value="$(arg start_bluesea)"/>
+    <arg name="start_cameras" value="$(arg start_cameras)"/>
+    <arg name="start_web" value="$(arg start_web)"/>
   </include>
+
   <include file="$(find amr_mapping)/launch/mapping.launch">
     <arg name="publish_description_tf" value="false"/>
     <arg name="publish_wheel_odom_tf" value="false"/>
     <arg name="with_watchdog" value="false"/>
+    <arg name="rviz" value="$(arg rviz)"/>
   </include>
 </launch>
